@@ -1,0 +1,3 @@
+[submodule "bitbox_mcu"]
+	path = bitbox_mcu
+	url = git@github.com:lclc/mcu
