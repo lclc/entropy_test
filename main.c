@@ -28,6 +28,8 @@
 #include "commander.h"
 #include "flags.h"
 
+
+#define RANDOM_DATA_FILE  "random_data"
 #define HID_REPORT_SIZE   COMMANDER_REPORT_SIZE
 
 extern const char *CMD_STR[];
@@ -144,6 +146,25 @@ static int api_result_has(const char *str)
     return 0;
 }
 
+void random_checks()
+{
+    printf("########## ent ##########\n");
+    system("ent " RANDOM_DATA_FILE);
+    printf("\n\n");
+    printf("########## dieharder ##########\n");
+    system("dieharder -a -f" RANDOM_DATA_FILE);
+    printf("\n\n");
+    printf("########## rngtest ##########\n");
+    if(system("cat " RANDOM_DATA_FILE " | rngtest") != 0)
+    {
+        // at least one block fails the FIPS tests
+        printf("rngtest Error: at least one block fails the FIPS tests\n\n");
+        exit(1);
+    }
+    printf("\n\n\n\n");
+    remove(RANDOM_DATA_FILE);
+}
+
 
 int main()
 {
@@ -161,7 +182,7 @@ int main()
         }
 
 
-        FILE *f = fopen("random_data", "w");
+        FILE *f = fopen(RANDOM_DATA_FILE, "w");
         if (f == NULL) {
             printf("tests_entropy: Error opening random_data file!\n");
             return 1;
@@ -178,10 +199,11 @@ int main()
         }
         fclose(f);
 
-        //lclc do random checks
+        printf("#################### Testing pseudo random ####################\n");
+        random_checks();
 
 
-        f = fopen("random_data", "w");
+        f = fopen(RANDOM_DATA_FILE, "w");
         if (f == NULL) {
             printf("tests_entropy: Error opening random_data file!\n");
             return 1;
@@ -197,7 +219,8 @@ int main()
         }
         fclose(f);
 
-        //lclc do random checks
+        printf("#################### Testing true random ####################\n");
+        random_checks();
     }
     return 0;
 }
