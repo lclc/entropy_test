@@ -20,6 +20,34 @@ cmake_minimum_required(VERSION 3.2)
 
 project(entropy_test)
 
+set(VERSION_MAJOR  1)
+set(VERSION_MINOR  0)
+set(VERSION_BUGFIX 0)
+set(VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUGFIX}")
+
+
+#-----------------------------------------------------------------------------
+# Options for building
+
+option(RPM                 "Build a RPM" OFF)
+option(DEB                 "Build a DEB" OFF)
+set(PACKAGE_CONTACT        "Lucas Betschart"  CACHE <TYPE>  "Package Maintainer")
+set(PACKAGE_VENDOR         "Lucas Betschart"  CACHE <TYPE>  "Package Vendor")
+
+
+#-----------------------------------------------------------------------------
+# Print system information
+
+message(STATUS "Version:                  ${VERSION_STRING}")
+message(STATUS "CMake version:            ${CMAKE_VERSION}")
+message(STATUS "System:                   ${CMAKE_SYSTEM}")
+message(STATUS "Processor:                ${CMAKE_SYSTEM_PROCESSOR}")
+
+message(STATUS "Build RPM:                ${RPM}")
+message(STATUS "Build DEB:                ${DEB}")
+message(STATUS "Package Contact:          ${PACKAGE_CONTACT}")
+message(STATUS "Package Vendor:           ${PACKAGE_VENDOR}")
+
 
 #-----------------------------------------------------------------------------
 # Compiler flags
@@ -103,3 +131,15 @@ include_directories(SYSTEM
 add_executable(entropy_test main.c)
 
 target_link_libraries(entropy_test ${HIDAPI_LIBRARY} bitbox)
+
+
+#-----------------------------------------------------------------------------
+# Uninstal
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/uninstall.cmake"
+    IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/uninstall.cmake)
+
