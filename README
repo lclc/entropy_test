@@ -1,0 +1,15 @@
+Test the entropy quality of your Digital Bitbox Hardware Wallet (digitalbitbox.com).
+
+## Build
+mkdir build
+cd build
+cmake ..
+make
+
+## Dependencies
+- hidapi
+- ent *
+- dieharder *
+- rng-tools *
+
+* Install from your repo or from the tools folder
