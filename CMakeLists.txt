@@ -143,3 +143,36 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/uninstall.cmake)
 
+
+#-----------------------------------------------------------------------------
+# Packaging
+set(CPACK_GENERATOR "TGZ")
+
+set(CPACK_PACKAGE_VERSION ${VERSION_STRING})
+set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
+set(CPACK_PACKAGE_CONTACT ${PACKAGE_CONTACT})
+set(CPACK_PACKAGE_VENDOR ${PACKAGE_VENDOR})
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}.${CMAKE_SYSTEM_PROCESSOR}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Digital Bitbox Entropy Test")
+set(CPACK_PACKAGE_DESCRIPTION "
+Simple tool to test the Digital Bitbox HW entropy quality with various open source tools.
+")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+
+if(RPM)
+  set(CPACK_GENERATOR "RPM")
+  set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+  set(CPACK_RPM_CHANGELOG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog")
+  set(CPACK_RPM_PACKAGE_REQUIRES "libhidapi-dev,ent,rng-tools,dieharder")
+endif(RPM)
+
+if(DEB)
+  set(CPACK_GENERATOR "DEB")
+  set(CPACK_DEBIAN_PACKAGE_DEPENDS "libhidapi-dev,ent,rng-tools,dieharder")
+  set(CPACK_DEBIAN_PACKAGE_PRIORITY "extra")
+  set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
+  set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/lclc/entropy_test")
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${PACKAGE_CONTACT})
+endif(DEB)
+
+include(CPack)
